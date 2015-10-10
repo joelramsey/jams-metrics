@@ -20,10 +20,19 @@ jamsMetrics.config(function ($stateProvider, $locationProvider) {
             url: '/album',
             controller: 'Album.controller',
             templateUrl: '/templates/album.html'
+        })
+        .state('metrics', {
+            url: '/metrics',
+            controller: 'Metrics.controller',
+            templateUrl: '/templates/metrics.html'
         });
 });
 
 //Controllers
+
+jamsMetrics.controller('Metrics.controller', ['$scope', function ($scope) {
+
+}]);
 
 jamsMetrics.controller('Landing.controller', ['$scope', function ($scope) {
     $scope.welcome = 'Turn the music up!';
@@ -133,14 +142,11 @@ jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Pla
             $scope.prog = ($scope.currentTimeSecs / $scope.totalTimeSecs) * 100;
         });
     };
-
-
-
-
 }]);
 
 //Services
 
+//Player Service
 jamsMetrics.factory('Player', function () {
     var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
     var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
@@ -249,6 +255,28 @@ jamsMetrics.factory('Player', function () {
         }
     }
 });
+
+//Metrics Capture Service
+jamsMetrics.service('Metric', ['$rootScope', function ($rootScope) {
+    $rootScope.songPlays = [];
+
+    return {
+        // Function that records a metric object by pushing it to the $rootScope array
+        registerSongPlay: function (songObj) {
+            // Add time to event register
+            songObj['playedAt'] = new Date();
+            $rootScope.songPlays.push(songObj);
+        },
+        listSongsPlayed: function () {
+            var songs = [];
+            angular.forEach($rootScope.songPlays, function (song) {
+                songs.push(song.name);
+            });
+            return songs;
+        }
+    };
+}]);
+
 
 //Directives
 
