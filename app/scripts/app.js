@@ -1,6 +1,6 @@
-var blocJamsAngular = angular.module('blocJamsAngular', ['ui.router']);
+var jamsMetrics = angular.module('jamsMetrics', ['ui.router']);
 
-blocJamsAngular.config(function ($stateProvider, $locationProvider) {
+jamsMetrics.config(function ($stateProvider, $locationProvider) {
     $locationProvider.html5Mode({
         enabled: true,
         requireBase: false
@@ -25,11 +25,11 @@ blocJamsAngular.config(function ($stateProvider, $locationProvider) {
 
 //Controllers
 
-blocJamsAngular.controller('Landing.controller', ['$scope', function ($scope) {
+jamsMetrics.controller('Landing.controller', ['$scope', function ($scope) {
     $scope.welcome = 'Turn the music up!';
 }]);
 
-blocJamsAngular.controller('Collection.controller', ['$scope', function ($scope) {
+jamsMetrics.controller('Collection.controller', ['$scope', function ($scope) {
     var albumsArray = [];
     for (var i = 0; i < 8; i++) {
         var currentAlbum = angular.copy(albumPicasso);
@@ -39,7 +39,7 @@ blocJamsAngular.controller('Collection.controller', ['$scope', function ($scope)
     $scope.albums = albumsArray;
 }]);
 
-blocJamsAngular.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Player', function ($scope, filteredTimeFilter, Player) {
+jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Player', function ($scope, filteredTimeFilter, Player) {
     $scope.currentAlbum = Player.currentAlbum;
     $scope.currentSoundFile = Player.currentSoundFile;
     $scope.isPlaying = Player.playing;
@@ -141,7 +141,7 @@ blocJamsAngular.controller('Album.controller', ['$scope', 'filteredTimeFilter', 
 
 //Services
 
-blocJamsAngular.factory('Player', function () {
+jamsMetrics.factory('Player', function () {
     var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
     var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
     var playerBarPlayButton = '<span class="ion-play"></span>';
@@ -252,7 +252,7 @@ blocJamsAngular.factory('Player', function () {
 
 //Directives
 
-blocJamsAngular.directive('slider', ['$document', function ($document) {
+jamsMetrics.directive('slider', ['$document', function ($document) {
     return {
         restrict: 'E',
         replace: true,
@@ -325,7 +325,7 @@ blocJamsAngular.directive('slider', ['$document', function ($document) {
 
 //Filter
 
-blocJamsAngular.filter('filteredTime', function () {
+jamsMetrics.filter('filteredTime', function () {
     return function (input) {
         var time = parseFloat(input);
         var minutes = Math.floor(input / 60);
