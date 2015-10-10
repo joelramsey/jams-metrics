@@ -1,0 +1,19 @@
+
+<html>
+  <body>
+    <script>
+function upTo(n, callback){
+  for (var i = 0; i <= n; i++){
+    callback(i);
+  }
+};
+
+function divide(a, b, successCallback, errorCallback) {
+  if (b === 0) {return errorCallback();}
+
+  return successCallback(a/b);
+};
+    </script>
+    <h1>Test Page</h1>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<main class="album-view container narrow">
+    <section class="clearfix">
+        <div class="column half">
+            <img ng-src="{{ currentAlbum.albumArtUrl }}" class="album-cover-art">
+        </div>
+        <div class="album-view-details column half">
+            <h2 class="album-view-title">{{ currentAlbum.name }}</h2>
+            <h3 class="album-view-artist">{{ currentAlbum.artist }}</h3>
+            <h5 class="album-view-release-info">{{ currentAlbum.label }}</h5>
+        </div>
+    </section>
+    <table class="album-view-song-list" ng-repeat="song in currentAlbum.songs">
+        <tr class="album-view-song-item" ng-mouseover="hoverIn($index)" ng-mouseleave="hoverOut()">
+            <td class="song-item-number">
+                <div ng-switch="getState($index)" ng-click="playPause($index)">
+                    <div ng-switch-when="hovering" class="ion-play album-song-button"></div>
+                    <div ng-switch-when="playing" class="ion-pause album-song-button"></div>
+                    <div ng-switch-default>
+                        {{ $index + 1 }}
+                    </div>
+                </div>
+            </td>
+            <td class="song-item-title">
+                {{ song.name }}
+            </td>
+            <td class="song-item-duration">
+                {{ song.length }}
+            </td>
+        </tr>
+    </table>
+</main>
+<section class="player-bar">
+    <div class="container">
+        <div class="player-bar-control-group left-controls">
+            <a class="previous" ng-click="previousSong()">
+                <span class="ion-skip-backward"></span>
+            </a>
+            <a class="play-pause" ng-click="playSong()">
+                <span class="ion-play" ng-show="!isPlaying"></span>
+                <span class="ion-pause" ng-show="isPlaying"></span>
+            </a>
+            <a class="next" ng-click="nextSong()">
+                <span class="ion-skip-forward"></span>
+            </a>
+        </div>
+        <div class="player-bar-control-group currently-playing">
+            <h2 class="song-name">{{ currentSongInAlbum.name }}</h2>
+            <h2 class="artist-song-mobile"> {{ currentSongInAlbum.name }} - {{ currentAlbum.artist }}</h2>
+            <div class="seek-control">
+                <slider class="seeker" bound-value="prog"></slider>
+                <div class="current-time">{{ currentTime }}</div>
+                <div class="total-time">{{ duration }}</div>
+            </div>
+            <h2 class="artist-name">{{ currentAlbum.artist }}</h2>
+        </div>
+        <div class="player-bar-control-group right-controls">
+            <div class="volume">
+                <span class="ion-volume-high"></span>
+                <slider class="volume" bound-value="vol"></slider>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
