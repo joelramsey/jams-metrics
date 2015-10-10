@@ -30,7 +30,7 @@ jamsMetrics.config(function ($stateProvider, $locationProvider) {
 
 //Controllers
 
-jamsMetrics.controller('Metrics.controller', ['$scope', function ($scope) {
+jamsMetrics.controller('Metrics.controller', ['$rootScope', function ($rootScope) {
 
 }]);
 
