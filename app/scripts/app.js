@@ -30,10 +30,6 @@ jamsMetrics.config(function ($stateProvider, $locationProvider) {
 
 //Controllers
 
-jamsMetrics.controller('Metrics.controller', ['$rootScope', function ($rootScope) {
-
-}]);
-
 jamsMetrics.controller('Landing.controller', ['$scope', function ($scope) {
     $scope.welcome = 'Turn the music up!';
 }]);
@@ -256,23 +252,20 @@ jamsMetrics.factory('Player', function () {
     }
 });
 
+jamsMetrics.controller('Metrics.controller', ['$rootScope', function ($rootScope) {
+
+    $scope.hit = Metrics.hits()
+
+}]);
+
 //Metrics Capture Service
 jamsMetrics.service('Metric', ['$rootScope', function ($rootScope) {
-    $rootScope.songPlays = [];
+
+    $rootScope.pageHits = [];
 
     return {
-        // Function that records a metric object by pushing it to the $rootScope array
-        registerSongPlay: function (songObj) {
-            // Add time to event register
-            songObj['playedAt'] = new Date();
-            $rootScope.songPlays.push(songObj);
-        },
-        listSongsPlayed: function () {
-            var songs = [];
-            angular.forEach($rootScope.songPlays, function (song) {
-                songs.push(song.name);
-            });
-            return songs;
+        hits: function () {
+            $rootScope.pageHits.push(new Date());
         }
     };
 }]);
