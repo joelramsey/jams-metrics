@@ -1,5 +1,6 @@
-<div>
-
-    <h1>Metrics View</h1>
-
+<div ng-controller="Metrics">
+    <h1>Song Hits</h1>
+    <div ng-repeat="songs in songs track by $index">
+        <p>{{songs}}</p>
+    </div>
 </div>

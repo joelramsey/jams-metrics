@@ -23,7 +23,7 @@ jamsMetrics.config(function ($stateProvider, $locationProvider) {
         })
         .state('metrics', {
             url: '/metrics',
-            controller: 'Metrics.controller',
+            controller: 'Metrics',
             templateUrl: '/templates/metrics.html'
         });
 });
@@ -34,7 +34,7 @@ jamsMetrics.controller('Landing.controller', ['$scope', function ($scope) {
     $scope.welcome = 'Turn the music up!';
 }]);
 
-jamsMetrics.controller('Collection.controller', ['$scope', function ($scope) {
+jamsMetrics.controller('Collection.controller', ['$scope', 'Metric', function ($scope) {
     var albumsArray = [];
     for (var i = 0; i < 8; i++) {
         var currentAlbum = angular.copy(albumPicasso);
@@ -44,7 +44,7 @@ jamsMetrics.controller('Collection.controller', ['$scope', function ($scope) {
     $scope.albums = albumsArray;
 }]);
 
-jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Player', function ($scope, filteredTimeFilter, Player) {
+jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Player', 'Metric', function ($scope, filteredTimeFilter, Player, Metric) {
     $scope.currentAlbum = Player.currentAlbum;
     $scope.currentSoundFile = Player.currentSoundFile;
     $scope.isPlaying = Player.playing;
@@ -75,6 +75,10 @@ jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Pla
             $scope.currentSongTime();
             Player.play();
         }
+
+        var songObj = Player.currentAlbum.songs[songIndex];
+        Metric.registerSongPlay(songObj);
+
     };
 
 
@@ -112,12 +116,16 @@ jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Pla
         Player.nextSong();
         $scope.currentSongInAlbum = $scope.currentAlbum.songs[Player.currentSongIndex];
         $scope.currentSongTime();
+        var songObj = Player.currentAlbum.songs[Player.currentSongIndex];
+        Metric.registerSongPlay(songObj);
     };
 
     $scope.previousSong = function () {
         Player.previousSong();
         $scope.currentSongInAlbum = $scope.currentAlbum.songs[Player.currentSongIndex];
         $scope.currentSongTime();
+        var songObj = Player.currentAlbum.songs[Player.currentSongIndex];
+        Metric.registerSongPlay(songObj);
 
     };
 
@@ -127,6 +135,8 @@ jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Pla
             Player.pause();
         } else {
             Player.play();
+            var songObj = Player.currentAlbum.songs[Player.currentSongIndex];
+            Metric.registerSongPlay(songObj);
             $scope.currentSongTime();
         }
         $scope.isPlaying = Player.playing;
@@ -171,7 +181,6 @@ jamsMetrics.factory('Player', function () {
             }
             this.currentSoundFile.play();
             this.setVolume(this.currentVolume);
-
         },
 
         nextSong: function () {
@@ -252,20 +261,31 @@ jamsMetrics.factory('Player', function () {
     }
 });
 
-jamsMetrics.controller('Metrics.controller', ['$rootScope', function ($rootScope) {
+jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scope, Player, Metric) {
 
-    $scope.hit = Metrics.hits()
+    $scope.songs = Metric.listSongsPlayed();
 
 }]);
 
+
 //Metrics Capture Service
 jamsMetrics.service('Metric', ['$rootScope', function ($rootScope) {
-
-    $rootScope.pageHits = [];
+    $rootScope.songPlays = [];
 
     return {
-        hits: function () {
-            $rootScope.pageHits.push(new Date());
+        // Function that records a metric object by pushing it to the $rootScope array
+        registerSongPlay: function (songObj) {
+            // Add time to event register
+            songObj['playedAt'] = new Date();
+            $rootScope.songPlays.push(songObj);
+
+        },
+        listSongsPlayed: function () {
+            var songs = [];
+            angular.forEach($rootScope.songPlays, function (song) {
+                songs.push(song.name, song.playedAt);
+            });
+            return songs;
         }
     };
 }]);
