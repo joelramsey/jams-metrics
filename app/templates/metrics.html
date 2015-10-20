@@ -3,4 +3,7 @@
     <div ng-repeat="songs in songs track by $index">
         <p>{{songs}}</p>
     </div>
+    <div ng-controller="Metrics">
+        <nvd3 options="options" data="data"></nvd3>
+    </div>
 </div>
