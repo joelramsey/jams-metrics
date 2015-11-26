@@ -32,14 +32,14 @@ var Hapi = require('hapi'),
         }
     };
 
-server.route([ routes.css, routes.js, routes.assets, routes.templates, routes.spa ]);
-server.start( onServerStarted );
+server.route([routes.css, routes.js, routes.assets, routes.templates, routes.spa]);
+server.start(onServerStarted);
 
 function onServerStarted() {
-    console.log( 'Server running on port ', port );
+    console.log('Server running on port ', port);
 }
 
-function createDirectoryRoute( directory ) {
+function createDirectoryRoute(directory) {
     return {
         directory: {
             path: path.join(__dirname, '/dist/', directory)
