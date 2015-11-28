@@ -77,7 +77,7 @@ jamsMetrics.controller('Album.controller', ['$scope', 'filteredTimeFilter', 'Pla
         }
 
         var songObj = Player.currentAlbum.songs[songIndex];
-        Metric.registerSongPlay(songObj);
+        //Metric.registerSongPlay(songObj);
 
     };
 
@@ -264,6 +264,7 @@ jamsMetrics.factory('Player', function () {
 jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scope, Player, Metric) {
 
     $scope.songs = Metric.listSongsPlayed();
+    //console.log('metrics songs', $scope.songs);
 
     $scope.options = {
         chart: {
@@ -298,43 +299,49 @@ jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scop
 
     $scope.data = [{
         key: "Cumulative Return",
-        values: [
-            {
-                "label": "A",
-                "value": -29.765957771107
-            },
-            {
-                "label": "B",
-                "value": 0
-            },
-            {
-                "label": "C",
-                "value": 32.807804682612
-            },
-            {
-                "label": "D",
-                "value": 196.45946739256
-            },
-            {
-                "label": "E",
-                "value": 0.19434030906893
-            },
-            {
-                "label": "F",
-                "value": -98.079782601442
-            },
-            {
-                "label": "G",
-                "value": -13.925743130903
-            },
-            {
-                "label": "H",
-                "value": -5.1387322875705
-            }
-        ]
+        values: $scope.songs
     }]
 
-}]);
+}]); 
+
+
+/*jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scope, Player, Metric) {
+
+    $scope.songs = Metric.listSongsPlayed();
+    //console.log('metrics songs', $scope.songs);
+
+    $scope.options = {
+            chart: {
+                type: 'pieChart',
+                height: 450,
+                donut: true,
+                x: function(d){return d.key;},
+                y: function(d){return d.y;},
+                showLabels: true,
+
+                pie: {
+                    startAngle: function(d) { return d.startAngle/2 -Math.PI/2 },
+                    endAngle: function(d) { return d.endAngle/2 -Math.PI/2 }
+                },
+                duration: 500,
+                legend: {
+                    margin: {
+                        top: 5,
+                        right: 140,
+                        bottom: 5,
+                        left: 0
+                    }
+                }
+            }
+        };
+
+
+    $scope.data = [
+            {
+                key: "Cumulative Return",
+                y: $scope.songs
+            }]
+}]); */
 
 
 //Metrics Capture Service
@@ -351,8 +358,19 @@ jamsMetrics.service('Metric', ['$rootScope', function ($rootScope) {
         },
         listSongsPlayed: function () {
             var songs = [];
-            angular.forEach($rootScope.songPlays, function (song) {
-                songs.push(song.name, song.playedAt);
+            var theSong = null;
+            angular.forEach($rootScope.songPlays, function (song) {                
+                songs.filter(function(obj,index) {
+                    if(obj.label === song.name) {
+                        theSong = obj;
+                    };                    
+                });
+                if(theSong) {
+                    theSong.value = theSong.value + 1
+                } else {
+                    songs.push({"label": song.name, "value": 1});
+                };            
+                
             });
             return songs;
         }
