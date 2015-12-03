@@ -1,13 +1,15 @@
-<div ng-controller="Metrics">
-    <h1>Administrator Metrics Portal</h1>
+<div>
+    <h1 class="banner">Administrator Metrics Portal</h1>
     <div ng-repeat="songs in songs track by $index">
         <p>{{songs}}</p>
     </div>
-    <!--<div ng-controller="MetricsBar">
-        <nvd3 options="options" data="data"></nvd3>
-    </div> -->
-    <div ng-controller="Metrics">
-    	<h2>Songs Played by Name</h2>
-    	<nvd3 options="options" data="data"></nvd3>
+
+    <div class="chart1" ng-controller="Metrics">
+        <h2 class="charttext">Songs Played by Name</h2>
+        <nvd3 options="barOptions" data="barData"></nvd3>
+    </div>
+    <div class="chart2" ng-controller="Metrics">
+        <h2 class="charttext">Division by Name</h2>
+        <nvd3 options="pieOptions" data="pieData"></nvd3>
     </div>
 </div>

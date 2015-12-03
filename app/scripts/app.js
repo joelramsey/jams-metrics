@@ -263,10 +263,10 @@ jamsMetrics.factory('Player', function () {
 
 jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scope, Player, Metric) {
 
-    $scope.songs = Metric.listSongsPlayed();
+    $scope.barSongs = Metric.listSongsPlayed('bar');
     //console.log('metrics songs', $scope.songs);
 
-    $scope.options = {
+    $scope.barOptions = {
         chart: {
             type: 'discreteBarChart',
             height: 450,
@@ -297,51 +297,51 @@ jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scop
         }
     };
 
-    $scope.data = [{
+    $scope.barData = [{
         key: "Cumulative Return",
-        values: $scope.songs
+        values: $scope.barSongs
     }]
 
-}]); 
-
-
-/*jamsMetrics.controller('Metrics', ['$scope', 'Player', 'Metric', function ($scope, Player, Metric) {
-
-    $scope.songs = Metric.listSongsPlayed();
+    $scope.pieSongs = Metric.listSongsPlayed('pie');
     //console.log('metrics songs', $scope.songs);
 
-    $scope.options = {
-            chart: {
-                type: 'pieChart',
-                height: 450,
-                donut: true,
-                x: function(d){return d.key;},
-                y: function(d){return d.y;},
-                showLabels: true,
+    $scope.pieOptions = {
+        chart: {
+            type: 'pieChart',
+            height: 450,
+            donut: true,
+            x: function (d) {
+                return d.key;
+            },
+            y: function (d) {
+                return d.y;
+            },
+            showLabels: true,
 
-                pie: {
-                    startAngle: function(d) { return d.startAngle/2 -Math.PI/2 },
-                    endAngle: function(d) { return d.endAngle/2 -Math.PI/2 }
+            pie: {
+                startAngle: function (d) {
+                    return d.startAngle / 2 - Math.PI / 2
                 },
-                duration: 500,
-                legend: {
-                    margin: {
-                        top: 5,
-                        right: 140,
-                        bottom: 5,
-                        left: 0
-                    }
+                endAngle: function (d) {
+                    return d.endAngle / 2 - Math.PI / 2
+                }
+            },
+            duration: 500,
+            legend: {
+                margin: {
+                    top: 5,
+                    right: 140,
+                    bottom: 5,
+                    left: 0
                 }
             }
-        };
+        }
+    };
 
 
-    $scope.data = [
-            {
-                key: "Cumulative Return",
-                y: $scope.songs
-            }]
-}]); */
+
+    $scope.pieData = $scope.pieSongs;
+}]);
 
 
 //Metrics Capture Service
@@ -356,23 +356,49 @@ jamsMetrics.service('Metric', ['$rootScope', function ($rootScope) {
             $rootScope.songPlays.push(songObj);
 
         },
-        listSongsPlayed: function () {
+        listSongsPlayed: function (chartType) {
             var songs = [];
             var theSong = null;
-            angular.forEach($rootScope.songPlays, function (song) {                
-                songs.filter(function(obj,index) {
-                    if(obj.label === song.name) {
-                        theSong = obj;
-                    };                    
+
+            if (chartType == 'bar') {
+                angular.forEach($rootScope.songPlays, function (song) {
+                    songs.filter(function (obj, index) {
+                        if (obj.label === song.name) {
+                            theSong = obj;
+                        };
+                    });
+                    if (theSong) {
+                        theSong.value = theSong.value + 1
+                    } else {
+                        songs.push({
+                            "label": song.name,
+                            "value": 1
+                        });
+                    };
+
                 });
-                if(theSong) {
-                    theSong.value = theSong.value + 1
-                } else {
-                    songs.push({"label": song.name, "value": 1});
-                };            
-                
-            });
+            } else if (chartType == 'pie') {
+
+                angular.forEach($rootScope.songPlays, function (song) {
+                    songs.filter(function (obj, index) {
+                        if (obj.key === song.name) {
+                            theSong = obj;
+                        };
+                    });
+                    if (theSong) {
+                        theSong.y = theSong.y + 1
+                    } else {
+                        songs.push({
+                            "key": song.name,
+                            "y": 1
+                        });
+                    };
+
+                });
+            }
             return songs;
+
+
         }
     };
 }]);
